@@ -1,6 +1,7 @@
 package com.powernode.order.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.powernode.common.constant.RedisConstant;
 import com.powernode.model.entity.order.OrderInfo;
@@ -38,6 +39,19 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         redisTemplate.opsForValue().set(RedisConstant.ORDER_ACCEPT_MARK + orderInfo.getId(),1);
 
         return orderInfo.getId();
+
+    }
+
+    @Override
+    public Integer queryOrderStatus(Long orderId) {
+
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(OrderInfo::getStatus);
+        queryWrapper.eq(OrderInfo::getId, orderId);
+
+        OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper);
+
+        return orderInfo.getStatus();
 
     }
 

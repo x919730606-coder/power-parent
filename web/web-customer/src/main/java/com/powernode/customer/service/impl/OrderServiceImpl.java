@@ -1,7 +1,6 @@
 package com.powernode.customer.service.impl;
 
 
-import com.powernode.common.result.Result;
 import com.powernode.customer.service.OrderService;
 import com.powernode.map.client.MapFeignClient;
 import com.powernode.model.form.customer.ExpectOrderForm;
@@ -78,6 +77,13 @@ public class OrderServiceImpl implements OrderService {
         Long orderId = orderInfoFeignClient.addOrderInfo(orderInfoForm).getData();
 
         return orderId;
+
+    }
+
+    @Override
+    public Integer queryOrderStatus(Long orderId) {
+
+        return orderInfoFeignClient.queryOrderStatus(orderId).getData();
 
     }
 

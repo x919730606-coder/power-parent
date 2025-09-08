@@ -21,8 +21,19 @@ public class OrderInfoController {
     @Operation(summary = "添加订单")
     @PostMapping(value = "/addOrderInfo")
     public Result<Long> addOrderInfo(@RequestBody OrderInfoForm orderInfoForm) {
+
         Long orderId = orderInfoService.addOrderInfo(orderInfoForm);
         return Result.ok(orderId);
+
+    }
+
+    @Operation(summary = "查询订单状态")
+    @GetMapping(value = "/queryOrderStatus/{orderId}")
+    public Result<Integer> queryOrderStatus(@PathVariable Long orderId) {
+
+        Integer orderStatus = orderInfoService.queryOrderStatus(orderId);
+        return Result.ok(orderStatus);
+
     }
 }
 
