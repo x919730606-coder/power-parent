@@ -1,0 +1,19 @@
+package com.example.drools.demo;
+
+import com.bjpowernode.learndrools.entity.User
+
+rule "判断儿童"
+    when
+        $user:User(age >=0 && age < 12)
+    then
+        System.out.println("儿童");
+        $user.setType("儿童");
+    end
+
+rule "判断少年"
+    when
+        $user:User(age >=12 && age < 18)
+    then
+        System.out.println("少年");
+        $user.setType("少年");
+    end

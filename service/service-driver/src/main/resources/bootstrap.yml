@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: service-driver
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        prefix: ${spring.application.name}
+        server-addr: 192.168.137.1:8848
+        shared-configs:
+          - data-id: common-account.yaml
+        namespace: eabd8366-1e52-49d9-8503-1bd12b41edcf
+      discovery:
+        server-addr: 192.168.137.1:8848
+        namespace: eabd8366-1e52-49d9-8503-1bd12b41edcf
+      username: nacos
+      password: nacos
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: dev
