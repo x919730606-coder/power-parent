@@ -2,6 +2,7 @@ package com.powernode.customer.service.impl;
 
 
 import com.powernode.customer.service.OrderService;
+import com.powernode.dispatch.client.NewOrderFeignClient;
 import com.powernode.map.client.MapFeignClient;
 import com.powernode.model.form.customer.ExpectOrderForm;
 import com.powernode.model.form.customer.SubmitOrderForm;
@@ -9,6 +10,7 @@ import com.powernode.model.form.map.CalculateDrivingLineForm;
 import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.model.form.rules.FeeRuleRequestForm;
 import com.powernode.model.vo.customer.ExpectOrderVo;
+import com.powernode.model.vo.dispatch.NewOrderTaskVo;
 import com.powernode.model.vo.map.DrivingLineVo;
 import com.powernode.model.vo.rules.FeeRuleResponseVo;
 import com.powernode.order.client.OrderInfoFeignClient;
@@ -16,6 +18,7 @@ import com.powernode.rules.client.FeeRuleFeignClient;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -31,6 +34,8 @@ public class OrderServiceImpl implements OrderService {
     private FeeRuleFeignClient feeRuleFeignClient;
     @Resource
     private OrderInfoFeignClient orderInfoFeignClient;
+    @Autowired
+    private NewOrderFeignClient newOrderFeignClient;
 
     @Override
     public ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm) {
@@ -75,6 +80,14 @@ public class OrderServiceImpl implements OrderService {
         orderInfoForm.setExpectAmount(data.getTotalAmount());
 
         Long orderId = orderInfoFeignClient.addOrderInfo(orderInfoForm).getData();
+
+        NewOrderTaskVo orderTaskVo = new NewOrderTaskVo();
+        BeanUtils.copyProperties(orderInfoForm, orderTaskVo);
+        orderTaskVo.setOrderId(orderId);
+        orderTaskVo.setExpectTime(drivingLineVo.getDuration());
+        orderTaskVo.setCreateTime(new Date());
+
+        newOrderFeignClient.addAndStartTask(orderTaskVo).getData();
 
         return orderId;
 
