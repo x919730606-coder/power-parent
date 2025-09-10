@@ -50,11 +50,20 @@ public class OrderInfoController {
 
     }
 
-    @Operation(summary = "查询当前用户的订单信息")
+    @Operation(summary = "查询顾客当前订单信息")
     @GetMapping(value = "/searchCustomerCurrentOrder/{userId}")
     public Result<CurrentOrderInfoVo> searchCustomerCurrentOrderInfo(@PathVariable Long userId) {
 
         CurrentOrderInfoVo currentOrderInfoVo = orderInfoService.searchCustomerCurrentOrderInfo(userId);
+        return Result.ok(currentOrderInfoVo);
+
+    }
+
+    @Operation(summary = "查询司机当前订单信息")
+    @GetMapping(value = "/searchDriverCurrentOrder/{driverId}")
+    public Result<CurrentOrderInfoVo> searchDriverCurrentOrderInfo(@PathVariable Long driverId) {
+
+        CurrentOrderInfoVo currentOrderInfoVo = orderInfoService.searchDriverCurrentOrderInfo(driverId);
         return Result.ok(currentOrderInfoVo);
 
     }

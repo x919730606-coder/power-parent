@@ -3,6 +3,7 @@ package com.powernode.driver.service.impl;
 
 import com.powernode.dispatch.client.NewOrderFeignClient;
 import com.powernode.driver.service.OrderService;
+import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.model.vo.order.NewOrderDataVo;
 import com.powernode.order.client.OrderInfoFeignClient;
 import jakarta.annotation.Resource;
@@ -32,6 +33,13 @@ public class OrderServiceImpl implements OrderService {
     public List<NewOrderDataVo> findNewOrderQueueData(Long driverId) {
 
         return newOrderFeignClient.findNewOrderQueueData(driverId).getData();
+
+    }
+
+    @Override
+    public CurrentOrderInfoVo searchDriverCurrentOrder(Long driverId) {
+
+        return orderInfoFeignClient.searchDriverCurrentOrderInfo(driverId).getData();
 
     }
 }

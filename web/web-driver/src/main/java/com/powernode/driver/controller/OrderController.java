@@ -2,6 +2,7 @@ package com.powernode.driver.controller;
 
 import com.powernode.common.annotation.PowerLogin;
 import com.powernode.common.result.Result;
+import com.powernode.common.util.AuthContextHolder;
 import com.powernode.driver.service.OrderService;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.model.vo.order.NewOrderDataVo;
@@ -46,9 +47,10 @@ public class OrderController {
     @PowerLogin
     @GetMapping("/searchDriverCurrentOrder")
     public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
+
+        Long userId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchDriverCurrentOrder(userId));
+
     }
 
 

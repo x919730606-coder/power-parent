@@ -22,4 +22,7 @@ public interface OrderInfoFeignClient {
     @GetMapping(value = "/order/info/searchCustomerCurrentOrder/{userId}")
     Result<CurrentOrderInfoVo> searchCustomerCurrentOrderInfo(@PathVariable Long userId);
 
+    @GetMapping(value = "/order/info/searchDriverCurrentOrder/{driverId}")
+    Result<CurrentOrderInfoVo> searchDriverCurrentOrderInfo(@PathVariable Long driverId);
+
 }
