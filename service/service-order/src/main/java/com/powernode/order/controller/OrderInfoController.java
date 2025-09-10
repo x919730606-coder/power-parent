@@ -4,6 +4,7 @@ import com.powernode.common.annotation.PowerLogin;
 import com.powernode.common.result.Result;
 import com.powernode.common.util.AuthContextHolder;
 import com.powernode.model.form.order.OrderInfoForm;
+import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,6 +47,15 @@ public class OrderInfoController {
         Long driverId = AuthContextHolder.getUserId();
         Boolean result = orderInfoService.robNewOrder(driverId, orderId);
         return Result.ok(result);
+
+    }
+
+    @Operation(summary = "查询当前用户的订单信息")
+    @GetMapping(value = "/searchCustomerCurrentOrder/{userId}")
+    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrderInfo(@PathVariable Long userId) {
+
+        CurrentOrderInfoVo currentOrderInfoVo = orderInfoService.searchCustomerCurrentOrderInfo(userId);
+        return Result.ok(currentOrderInfoVo);
 
     }
 }
