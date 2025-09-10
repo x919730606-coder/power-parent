@@ -1,6 +1,8 @@
 package com.powernode.order.controller;
 
+import com.powernode.common.annotation.PowerLogin;
 import com.powernode.common.result.Result;
+import com.powernode.common.util.AuthContextHolder;
 import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +35,17 @@ public class OrderInfoController {
 
         Integer orderStatus = orderInfoService.queryOrderStatus(orderId);
         return Result.ok(orderStatus);
+
+    }
+
+    @Operation(summary = "抢单")
+    @PostMapping(value = "/robNewOrder/{orderId}")
+    @PowerLogin
+    public Result<Boolean> robNewOrder(@PathVariable Long orderId) {
+
+        Long driverId = AuthContextHolder.getUserId();
+        Boolean result = orderInfoService.robNewOrder(driverId, orderId);
+        return Result.ok(result);
 
     }
 }
