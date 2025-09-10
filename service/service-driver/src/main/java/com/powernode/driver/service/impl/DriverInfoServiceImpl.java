@@ -233,4 +233,19 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
 
     }
 
+    @Override
+    public Boolean updateServiceStatus(Long driverId, Integer status) {
+
+        LambdaQueryWrapper<DriverSet> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DriverSet::getDriverId, driverId);
+
+        DriverSet driverSet = new DriverSet();
+        driverSet.setServiceStatus(status);
+
+        driverSetMapper.update(driverSet, queryWrapper);
+
+        return true;
+
+    }
+
 }

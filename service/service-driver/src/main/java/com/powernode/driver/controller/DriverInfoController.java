@@ -80,5 +80,13 @@ public class DriverInfoController {
         return Result.ok(driverInfoService.verifyDriverFace(driverFaceModelForm));
 
     }
+
+    @Operation(summary = "修改配送员接单状态")
+    @GetMapping("/updateServiceStatus/{driverId}/{status}")
+    public Result<Boolean> updateServiceStatus(@PathVariable Long driverId, @PathVariable Integer status) {
+
+        return Result.ok(driverInfoService.updateServiceStatus(driverId, status));
+
+    }
 }
 

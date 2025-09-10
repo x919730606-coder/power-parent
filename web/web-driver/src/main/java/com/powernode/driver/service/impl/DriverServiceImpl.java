@@ -2,8 +2,12 @@ package com.powernode.driver.service.impl;
 
 
 import com.powernode.common.constant.RedisConstant;
+import com.powernode.common.execption.PowerException;
+import com.powernode.common.result.ResultCodeEnum;
+import com.powernode.dispatch.client.NewOrderFeignClient;
 import com.powernode.driver.client.DriverInfoFeignClient;
 import com.powernode.driver.service.DriverService;
+import com.powernode.map.client.LocationFeignClient;
 import com.powernode.model.form.driver.DriverFaceModelForm;
 import com.powernode.model.form.driver.UpdateDriverAuthInfoForm;
 import com.powernode.model.vo.driver.DriverAuthInfoVo;
@@ -24,6 +28,10 @@ public class DriverServiceImpl implements DriverService {
     private DriverInfoFeignClient driverInfoFeignClient;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private LocationFeignClient locationFeignClient;
+    @Resource
+    private NewOrderFeignClient newOrderFeignClient;
 
     @Override
     public String login(String code) {
@@ -65,6 +73,44 @@ public class DriverServiceImpl implements DriverService {
     public Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm) {
 
         return driverInfoFeignClient.verifyDriverFace(driverFaceModelForm).getData();
+
+    }
+
+    @Override
+    public Boolean startService(Long driverId) {
+
+        DriverLoginVo driverLoginVo = driverInfoFeignClient.getDriverLoginInfo(driverId).getData();
+
+        if (driverLoginVo.getAuthStatus() != 2){
+            throw new PowerException(ResultCodeEnum.AUTH_ERROR);
+        }
+
+        Boolean isFace = driverInfoFeignClient.isFaceRecognition(driverId).getData();
+
+        if(!isFace){
+            throw new PowerException(ResultCodeEnum.FACE_ERROR);
+        }
+
+        driverInfoFeignClient.updateServiceStatus(driverId, 1);
+
+        locationFeignClient.removeDriverLocation(driverId);
+
+        newOrderFeignClient.cleanNewOrderQueueData(driverId);
+
+        return true;
+
+    }
+
+    @Override
+    public Boolean stopService(Long driverId) {
+
+        driverInfoFeignClient.updateServiceStatus(driverId, 0);
+
+        locationFeignClient.removeDriverLocation(driverId);
+
+        newOrderFeignClient.cleanNewOrderQueueData(driverId);
+
+        return true;
 
     }
 

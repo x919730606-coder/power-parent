@@ -95,6 +95,26 @@ public class DriverController {
 
     }
 
+    @Operation(summary = "开启接单")
+    @GetMapping("/startService/")
+    @PowerLogin
+    public Result<Boolean> startService() {
+
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.startService(driverId));
+
+    }
+
+    @Operation(summary = "停止接单")
+    @GetMapping("/stopService/")
+    @PowerLogin
+    public Result<Boolean> stopService() {
+
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.stopService(driverId));
+
+    }
+
 
 }
 
