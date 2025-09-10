@@ -18,9 +18,13 @@ import com.powernode.model.vo.driver.DriverLoginVo;
 
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.iai.v20180301.IaiClient;
 import com.tencentcloudapi.iai.v20180301.models.CreatePersonRequest;
 import com.tencentcloudapi.iai.v20180301.models.CreatePersonResponse;
+import com.tencentcloudapi.iai.v20180301.models.VerifyFaceRequest;
+import com.tencentcloudapi.iai.v20180301.models.VerifyFaceResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -187,6 +191,45 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         Long count = driverFaceRecognitionMapper.selectCount(queryWrapper);
 
         return count != 0;
+
+    }
+
+    @Override
+    public Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm){
+
+        try {
+
+            Credential credential = new Credential(tencentProperties.getSecretId(), tencentProperties.getSecretKey());
+            HttpProfile httpProfile = new HttpProfile();
+            httpProfile.setEndpoint("iai.tencentcloudapi.com");
+            ClientProfile clientProfile = new ClientProfile();
+            clientProfile.setHttpProfile(httpProfile);
+
+            IaiClient iaiClient = new IaiClient(credential, tencentProperties.getRegion(), clientProfile);
+
+            VerifyFaceRequest verifyFaceRequest = new VerifyFaceRequest();
+
+            verifyFaceRequest.setImage(driverFaceModelForm.getImageBase64());
+            verifyFaceRequest.setPersonId(driverFaceModelForm.getDriverId().toString());
+
+            VerifyFaceResponse verifyFaceResponse = iaiClient.VerifyFace(verifyFaceRequest);
+
+            if (verifyFaceResponse.getIsMatch()){
+
+                DriverFaceRecognition driverFaceRecognition = new DriverFaceRecognition();
+                driverFaceRecognition.setDriverId(driverFaceModelForm.getDriverId());
+                driverFaceRecognition.setFaceDate(new Date());
+
+                driverFaceRecognitionMapper.insert(driverFaceRecognition);
+                return true;
+
+            }
+
+        } catch (TencentCloudSDKException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
 
     }
 
