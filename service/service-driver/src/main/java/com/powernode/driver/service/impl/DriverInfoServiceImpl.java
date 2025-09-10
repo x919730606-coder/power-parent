@@ -6,17 +6,11 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.powernode.common.constant.SystemConstant;
-import com.powernode.driver.mapper.DriverAccountMapper;
-import com.powernode.driver.mapper.DriverInfoMapper;
-import com.powernode.driver.mapper.DriverLoginLogMapper;
-import com.powernode.driver.mapper.DriverSetMapper;
+import com.powernode.driver.mapper.*;
 import com.powernode.driver.properties.TencentProperties;
 import com.powernode.driver.service.CosService;
 import com.powernode.driver.service.DriverInfoService;
-import com.powernode.model.entity.driver.DriverAccount;
-import com.powernode.model.entity.driver.DriverInfo;
-import com.powernode.model.entity.driver.DriverLoginLog;
-import com.powernode.model.entity.driver.DriverSet;
+import com.powernode.model.entity.driver.*;
 import com.powernode.model.form.driver.DriverFaceModelForm;
 import com.powernode.model.form.driver.UpdateDriverAuthInfoForm;
 import com.powernode.model.vo.driver.DriverAuthInfoVo;
@@ -30,11 +24,13 @@ import com.tencentcloudapi.iai.v20180301.models.CreatePersonResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Slf4j
 @Service
@@ -53,6 +49,8 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
     private CosService cosService;
     @Resource
     private TencentProperties tencentProperties;
+    @Resource
+    private DriverFaceRecognitionMapper driverFaceRecognitionMapper;
 
     @Override
     public Long login(String code) {
@@ -176,6 +174,19 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         DriverSet driverSet = driverSetMapper.selectOne(queryWrapper);
 
         return driverSet;
+
+    }
+
+    @Override
+    public Boolean isFaceRecognition(Long driverId){
+
+        LambdaQueryWrapper<DriverFaceRecognition> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DriverFaceRecognition::getDriverId, driverId);
+        queryWrapper.eq(DriverFaceRecognition::getFaceDate, new DateTime().toString("yyyy-MM-dd"));
+
+        Long count = driverFaceRecognitionMapper.selectCount(queryWrapper);
+
+        return count != 0;
 
     }
 

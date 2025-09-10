@@ -4,7 +4,6 @@ package com.powernode.dispatch.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.powernode.common.constant.RedisConstant;
-import com.powernode.common.result.Result;
 import com.powernode.dispatch.client.XxlJobClient;
 import com.powernode.dispatch.mapper.OrderJobMapper;
 import com.powernode.dispatch.service.NewOrderService;
@@ -22,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -109,6 +109,35 @@ public class NewOrderServiceImpl implements NewOrderService {
             }
         });
 
+        return true;
+
+    }
+
+    @Override
+    public List<NewOrderDataVo> findNewOrderQueueData(Long driverId){
+
+        List<NewOrderDataVo> list = new ArrayList<>();
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driverId;
+
+        Long size = redisTemplate.opsForList().size(key);
+
+        if (size > 0){
+            for (int i = 0; i < size; i++) {
+                String json = (String) redisTemplate.opsForList().rightPop(key);
+                NewOrderDataVo newOrderDataVo = JSONObject.parseObject(json, NewOrderDataVo.class);
+                list.add(newOrderDataVo);
+            }
+        }
+
+        return list;
+
+    }
+
+    @Override
+    public Boolean cleanNewOrderQueueData(Long driverId){
+
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driverId;
+        redisTemplate.delete(key);
         return true;
 
     }

@@ -74,6 +74,16 @@ public class DriverController {
 
     }
 
+    @Operation(summary = "查询配送员当天是否进行人脸识别")
+    @GetMapping("/isFaceRecognition/")
+    @PowerLogin
+    public Result<Boolean> isFaceRecognition() {
+
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.isFaceRecognition(driverId));
+
+    }
+
 
 }
 
