@@ -4,8 +4,11 @@ package com.powernode.map.service.impl;
 import com.powernode.common.constant.RedisConstant;
 import com.powernode.common.constant.SystemConstant;
 import com.powernode.driver.client.DriverInfoFeignClient;
+import com.powernode.map.repository.OrderServiceLocationRepository;
 import com.powernode.map.service.LocationService;
 import com.powernode.model.entity.driver.DriverSet;
+import com.powernode.model.entity.map.OrderServiceLocation;
+import com.powernode.model.form.map.OrderServiceLocationForm;
 import com.powernode.model.form.map.SearchNearByDriverForm;
 import com.powernode.model.form.map.UpdateDriverLocationForm;
 import com.powernode.model.form.map.UpdateOrderLocationForm;
@@ -13,6 +16,8 @@ import com.powernode.model.vo.map.NearByDriverVo;
 import com.powernode.model.vo.map.OrderLocationVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.geo.*;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,6 +40,8 @@ public class LocationServiceImpl implements LocationService {
     private RedisTemplate redisTemplate;
     @Resource
     private DriverInfoFeignClient driverInfoFeignClient;
+    @Resource
+    private OrderServiceLocationRepository orderServiceLocationRepository;
 
     @Override
     public Boolean updateDriverLocation(UpdateDriverLocationForm driverLocationForm){
@@ -124,6 +132,25 @@ public class LocationServiceImpl implements LocationService {
 
         OrderLocationVo orderLocationVo = (OrderLocationVo) redisTemplate.opsForValue().get(RedisConstant.UPDATE_ORDER_LOCATION + orderId);
         return orderLocationVo;
+
+    }
+
+    @Override
+    public Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderServiceLocationFormList){
+
+        ArrayList<OrderServiceLocation> serviceLocations = new ArrayList<>();
+
+        orderServiceLocationFormList.forEach(item -> {
+            OrderServiceLocation serviceLocation = new OrderServiceLocation();
+            BeanUtils.copyProperties(item, serviceLocation);
+            serviceLocation.setId(ObjectId.get().toString());
+            serviceLocation.setCreateTime(new Date());
+            serviceLocations.add(serviceLocation);
+        });
+
+        orderServiceLocationRepository.saveAll(serviceLocations);
+
+        return true;
 
     }
 

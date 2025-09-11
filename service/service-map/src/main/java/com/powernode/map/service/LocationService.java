@@ -1,5 +1,6 @@
 package com.powernode.map.service;
 
+import com.powernode.model.form.map.OrderServiceLocationForm;
 import com.powernode.model.form.map.SearchNearByDriverForm;
 import com.powernode.model.form.map.UpdateDriverLocationForm;
 import com.powernode.model.form.map.UpdateOrderLocationForm;
@@ -19,4 +20,6 @@ public interface LocationService {
     Boolean updateDriverLocationToCache(UpdateOrderLocationForm orderLocationForm);
 
     OrderLocationVo getCacheOrderLocation(Long orderId);
+
+    Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderServiceLocationFormList);
 }

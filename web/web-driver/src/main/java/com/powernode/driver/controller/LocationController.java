@@ -4,6 +4,7 @@ import com.powernode.common.annotation.PowerLogin;
 import com.powernode.common.result.Result;
 import com.powernode.common.util.AuthContextHolder;
 import com.powernode.driver.service.LocationService;
+import com.powernode.model.form.map.OrderServiceLocationForm;
 import com.powernode.model.form.map.UpdateDriverLocationForm;
 import com.powernode.model.form.map.UpdateOrderLocationForm;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @Tag(name = "位置API接口管理")
@@ -43,6 +46,14 @@ public class LocationController {
     public Result<Boolean> updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm orderLocationForm){
 
         return Result.ok(locationService.updateDriverLocationToCache(orderLocationForm));
+
+    }
+
+    @Operation(summary = "配送员配送中上传位置信息")
+    @PostMapping("/saveOrderServiceLocation")
+    public Result<Boolean> updateOrderLocation(@RequestBody List<OrderServiceLocationForm> orderServiceLocationFormList){
+
+        return Result.ok(locationService.updateOrderLocation(orderServiceLocationFormList));
 
     }
 	

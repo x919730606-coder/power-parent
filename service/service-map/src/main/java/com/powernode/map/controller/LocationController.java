@@ -2,6 +2,7 @@ package com.powernode.map.controller;
 
 import com.powernode.common.result.Result;
 import com.powernode.map.service.LocationService;
+import com.powernode.model.form.map.OrderServiceLocationForm;
 import com.powernode.model.form.map.SearchNearByDriverForm;
 import com.powernode.model.form.map.UpdateDriverLocationForm;
 import com.powernode.model.form.map.UpdateOrderLocationForm;
@@ -62,6 +63,14 @@ public class LocationController {
     public Result<OrderLocationVo> getCacheOrderLocation(@PathVariable Long orderId) {
 
         return Result.ok(locationService.getCacheOrderLocation(orderId));
+
+    }
+
+    @Operation(summary = "批量保存订单服务位置信息")
+    @PostMapping("/saveOrderServiceLocation")
+    public Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderServiceLocationFormList) {
+
+        return Result.ok(locationService.saveOrderServiceLocation(orderServiceLocationFormList));
 
     }
 
