@@ -4,6 +4,8 @@ import com.powernode.common.annotation.PowerLogin;
 import com.powernode.common.result.Result;
 import com.powernode.common.util.AuthContextHolder;
 import com.powernode.driver.service.OrderService;
+import com.powernode.model.form.map.CalculateDrivingLineForm;
+import com.powernode.model.vo.map.DrivingLineVo;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.model.vo.order.NewOrderDataVo;
 import com.powernode.model.vo.order.OrderInfoVo;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -76,6 +75,15 @@ public class OrderController {
 
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.getOrderInfo(driverId, orderId));
+
+    }
+
+    @Operation(summary = "配送员去顾客位置起始路线")
+    @PowerLogin
+    @GetMapping("/calculateDrivingLine")
+    public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm drivingLineForm) {
+
+        return Result.ok(orderService.calculateDrivingLine(drivingLineForm));
 
     }
 

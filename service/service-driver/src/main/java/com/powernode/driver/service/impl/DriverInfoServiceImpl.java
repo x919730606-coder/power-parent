@@ -14,6 +14,7 @@ import com.powernode.model.entity.driver.*;
 import com.powernode.model.form.driver.DriverFaceModelForm;
 import com.powernode.model.form.driver.UpdateDriverAuthInfoForm;
 import com.powernode.model.vo.driver.DriverAuthInfoVo;
+import com.powernode.model.vo.driver.DriverInfoVo;
 import com.powernode.model.vo.driver.DriverLoginVo;
 
 import com.tencentcloudapi.common.Credential;
@@ -245,6 +246,17 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         driverSetMapper.update(driverSet, queryWrapper);
 
         return true;
+
+    }
+
+    @Override
+    public DriverInfoVo getDriverInfoOrder(Long driverId) {
+
+        DriverInfo driverInfo = getById(driverId);
+        DriverInfoVo driverInfoVo = new DriverInfoVo();
+        BeanUtils.copyProperties(driverInfo,driverInfoVo);
+
+        return driverInfoVo;
 
     }
 

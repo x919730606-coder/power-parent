@@ -5,7 +5,10 @@ import com.powernode.common.execption.PowerException;
 import com.powernode.common.result.ResultCodeEnum;
 import com.powernode.dispatch.client.NewOrderFeignClient;
 import com.powernode.driver.service.OrderService;
+import com.powernode.map.client.MapFeignClient;
 import com.powernode.model.entity.order.OrderInfo;
+import com.powernode.model.form.map.CalculateDrivingLineForm;
+import com.powernode.model.vo.map.DrivingLineVo;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.model.vo.order.NewOrderDataVo;
 import com.powernode.model.vo.order.OrderInfoVo;
@@ -26,6 +29,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderInfoFeignClient orderInfoFeignClient;
     @Resource
     private NewOrderFeignClient newOrderFeignClient;
+    @Resource
+    private MapFeignClient mapFeignClient;
 
     @Override
     public Integer queryOrderStatus(Long orderId) {
@@ -59,6 +64,13 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderInfo, orderInfoVo);
         orderInfoVo.setOrderId(orderId);
         return orderInfoVo;
+
+    }
+
+    @Override
+    public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm drivingLineForm) {
+
+        return mapFeignClient.calculateDrivingLine(drivingLineForm).getData();
 
     }
 }

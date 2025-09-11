@@ -2,10 +2,10 @@ package com.powernode.customer.service.impl;
 
 
 import com.powernode.common.execption.PowerException;
-import com.powernode.common.result.Result;
 import com.powernode.common.result.ResultCodeEnum;
 import com.powernode.customer.service.OrderService;
 import com.powernode.dispatch.client.NewOrderFeignClient;
+import com.powernode.driver.client.DriverInfoFeignClient;
 import com.powernode.map.client.MapFeignClient;
 import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.form.customer.ExpectOrderForm;
@@ -15,6 +15,7 @@ import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.model.form.rules.FeeRuleRequestForm;
 import com.powernode.model.vo.customer.ExpectOrderVo;
 import com.powernode.model.vo.dispatch.NewOrderTaskVo;
+import com.powernode.model.vo.driver.DriverInfoVo;
 import com.powernode.model.vo.map.DrivingLineVo;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.model.vo.order.OrderInfoVo;
@@ -42,6 +43,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderInfoFeignClient orderInfoFeignClient;
     @Autowired
     private NewOrderFeignClient newOrderFeignClient;
+    @Resource
+    private DriverInfoFeignClient driverInfoFeignClient;
 
     @Override
     public ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm) {
@@ -124,6 +127,18 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderInfo, orderInfoVo);
         orderInfoVo.setOrderId(orderId);
         return orderInfoVo;
+
+    }
+
+    @Override
+    public DriverInfoVo getDriverInfo(Long orderId, Long customerId) {
+
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        if (orderInfo.getCustomerId().longValue() != customerId.longValue()){
+            throw new PowerException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+
+        return driverInfoFeignClient.getDriverInfoOrder(orderInfo.getDriverId()).getData();
 
     }
 

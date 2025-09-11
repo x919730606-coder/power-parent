@@ -8,6 +8,7 @@ import com.powernode.model.form.driver.DriverFaceModelForm;
 import com.powernode.model.form.driver.UpdateDriverAuthInfoForm;
 import com.powernode.model.vo.driver.CosUploadVo;
 import com.powernode.model.vo.driver.DriverAuthInfoVo;
+import com.powernode.model.vo.driver.DriverInfoVo;
 import com.powernode.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -87,6 +88,12 @@ public class DriverInfoController {
 
         return Result.ok(driverInfoService.updateServiceStatus(driverId, status));
 
+    }
+
+    @Operation(summary = "配送员信息")
+    @GetMapping("/getDriverInfoOrder/{driverId}")
+    public Result<DriverInfoVo> getDriverInfoOrder(@PathVariable Long driverId) {
+        return Result.ok(driverInfoService.getDriverInfoOrder(driverId));
     }
 }
 

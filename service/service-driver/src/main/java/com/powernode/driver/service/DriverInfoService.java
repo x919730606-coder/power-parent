@@ -6,6 +6,7 @@ import com.powernode.model.entity.driver.DriverSet;
 import com.powernode.model.form.driver.DriverFaceModelForm;
 import com.powernode.model.form.driver.UpdateDriverAuthInfoForm;
 import com.powernode.model.vo.driver.DriverAuthInfoVo;
+import com.powernode.model.vo.driver.DriverInfoVo;
 import com.powernode.model.vo.driver.DriverLoginVo;
 
 public interface DriverInfoService extends IService<DriverInfo> {
@@ -27,4 +28,6 @@ public interface DriverInfoService extends IService<DriverInfo> {
     Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm);
 
     Boolean updateServiceStatus(Long driverId, Integer status);
+
+    DriverInfoVo getDriverInfoOrder(Long driverId);
 }

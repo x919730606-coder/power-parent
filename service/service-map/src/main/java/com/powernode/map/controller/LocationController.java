@@ -4,6 +4,7 @@ import com.powernode.common.result.Result;
 import com.powernode.map.service.LocationService;
 import com.powernode.model.form.map.SearchNearByDriverForm;
 import com.powernode.model.form.map.UpdateDriverLocationForm;
+import com.powernode.model.form.map.UpdateOrderLocationForm;
 import com.powernode.model.vo.map.NearByDriverVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,6 +45,14 @@ public class LocationController {
     public Result<List<NearByDriverVo>> searchNearByDriver(@RequestBody SearchNearByDriverForm searchNearByDriverForm) {
 
         return Result.ok(locationService.searchNearByDriver(searchNearByDriverForm));
+
+    }
+
+    @Operation(summary = "更新配送员位置到缓存")
+    @PostMapping("/updateOrderLocationToCache")
+    public Result<Boolean> updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm orderLocationForm) {
+
+        return locationService.updateDriverLocationToCache(orderLocationForm) ? Result.ok() : Result.fail();
 
     }
 

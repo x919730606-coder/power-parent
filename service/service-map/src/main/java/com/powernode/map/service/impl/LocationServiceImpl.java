@@ -8,7 +8,9 @@ import com.powernode.map.service.LocationService;
 import com.powernode.model.entity.driver.DriverSet;
 import com.powernode.model.form.map.SearchNearByDriverForm;
 import com.powernode.model.form.map.UpdateDriverLocationForm;
+import com.powernode.model.form.map.UpdateOrderLocationForm;
 import com.powernode.model.vo.map.NearByDriverVo;
+import com.powernode.model.vo.map.OrderLocationVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.geo.*;
@@ -101,6 +103,19 @@ public class LocationServiceImpl implements LocationService {
         }
 
     return list;
+
+    }
+
+    @Override
+    public Boolean updateDriverLocationToCache(UpdateOrderLocationForm orderLocationForm){
+
+        OrderLocationVo orderLocationVo = new OrderLocationVo();
+        orderLocationVo.setLatitude(orderLocationForm.getLatitude());
+        orderLocationVo.setLongitude(orderLocationForm.getLongitude());
+
+        redisTemplate.opsForValue().set(RedisConstant.UPDATE_ORDER_LOCATION + orderLocationForm.getOrderId(), orderLocationVo);
+
+        return true;
 
     }
 
