@@ -9,6 +9,8 @@ import com.powernode.common.result.ResultCodeEnum;
 import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.enums.OrderStatus;
 import com.powernode.model.form.order.OrderInfoForm;
+import com.powernode.model.form.order.StartDriveForm;
+import com.powernode.model.form.order.UpdateOrderCartForm;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.order.mapper.OrderInfoMapper;
 import com.powernode.order.service.OrderInfoService;
@@ -189,6 +191,38 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         OrderInfo updateOrderInfo = new OrderInfo();
         updateOrderInfo.setStatus(OrderStatus.DRIVER_ARRIVED.getStatus());
         updateOrderInfo.setArriveTime(new Date());
+
+        orderInfoMapper.update(updateOrderInfo, queryWrapper);
+
+        return true;
+
+    }
+
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm orderCartForm){
+
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, orderCartForm.getOrderId());
+        queryWrapper.eq(OrderInfo::getDriverId, orderCartForm.getDriverId());
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        BeanUtils.copyProperties(orderCartForm, updateOrderInfo);
+        updateOrderInfo.setStatus(OrderStatus.UPDATE_CART_INFO.getStatus());
+
+        return true;
+
+    }
+
+    @Override
+    public Boolean startDrive(StartDriveForm startDriveForm){
+
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, startDriveForm.getOrderId());
+        queryWrapper.eq(OrderInfo::getDriverId, startDriveForm.getDriverId());
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        updateOrderInfo.setStatus(OrderStatus.START_SERVICE.getStatus());
+        updateOrderInfo.setStartServiceTime(new Date());
 
         orderInfoMapper.update(updateOrderInfo, queryWrapper);
 

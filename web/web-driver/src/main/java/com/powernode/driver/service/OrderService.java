@@ -1,6 +1,8 @@
 package com.powernode.driver.service;
 
 import com.powernode.model.form.map.CalculateDrivingLineForm;
+import com.powernode.model.form.order.StartDriveForm;
+import com.powernode.model.form.order.UpdateOrderCartForm;
 import com.powernode.model.vo.map.DrivingLineVo;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.model.vo.order.NewOrderDataVo;
@@ -22,4 +24,8 @@ public interface OrderService {
     DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm drivingLineForm);
 
     Boolean driverArrivedStartLocation(Long orderId, Long driverId);
+
+    Boolean updateOrderCart(UpdateOrderCartForm orderCartForm);
+
+    Boolean startDrive(StartDriveForm startDriveForm);
 }

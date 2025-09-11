@@ -5,6 +5,8 @@ import com.powernode.common.result.Result;
 import com.powernode.common.util.AuthContextHolder;
 import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.form.order.OrderInfoForm;
+import com.powernode.model.form.order.StartDriveForm;
+import com.powernode.model.form.order.UpdateOrderCartForm;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -82,6 +84,22 @@ public class OrderInfoController {
 
         Boolean result = orderInfoService.driverArrivedStartLocation(orderId, driverId);
         return Result.ok(result);
+
+    }
+
+    @Operation(summary = "更新订单车辆信息")
+    @PostMapping(value = "/updateOrderCart")
+    public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm orderCartForm) {
+
+        return Result.ok(orderInfoService.updateOrderCart(orderCartForm));
+
+    }
+
+    @Operation(summary = "配送员开始配送")
+    @PostMapping(value = "/startDrive")
+    public Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm) {
+
+        return Result.ok(orderInfoService.startDrive(startDriveForm));
 
     }
 }
