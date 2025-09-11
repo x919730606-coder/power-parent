@@ -6,6 +6,7 @@ import com.powernode.model.form.map.SearchNearByDriverForm;
 import com.powernode.model.form.map.UpdateDriverLocationForm;
 import com.powernode.model.form.map.UpdateOrderLocationForm;
 import com.powernode.model.vo.map.NearByDriverVo;
+import com.powernode.model.vo.map.OrderLocationVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -53,6 +54,14 @@ public class LocationController {
     public Result<Boolean> updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm orderLocationForm) {
 
         return locationService.updateDriverLocationToCache(orderLocationForm) ? Result.ok() : Result.fail();
+
+    }
+
+    @Operation(summary = "获取缓存中配送员的位置信息")
+    @GetMapping("/getCacheOrderLocation/{orderId}")
+    public Result<OrderLocationVo> getCacheOrderLocation(@PathVariable Long orderId) {
+
+        return Result.ok(locationService.getCacheOrderLocation(orderId));
 
     }
 

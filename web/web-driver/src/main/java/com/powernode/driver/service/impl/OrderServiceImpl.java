@@ -73,4 +73,11 @@ public class OrderServiceImpl implements OrderService {
         return mapFeignClient.calculateDrivingLine(drivingLineForm).getData();
 
     }
+
+    @Override
+    public Boolean driverArrivedStartLocation(Long orderId,Long driverId){
+
+        return orderInfoFeignClient.driverArrivedStartLocation(orderId,driverId).getData();
+
+    }
 }

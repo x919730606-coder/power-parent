@@ -41,11 +41,9 @@ public class OrderInfoController {
     }
 
     @Operation(summary = "抢单")
-    @PostMapping(value = "/robNewOrder/{orderId}")
-    @PowerLogin
-    public Result<Boolean> robNewOrder(@PathVariable Long orderId) {
+    @PostMapping(value = "/robNewOrder/{orderId}/{driverId}")
+    public Result<Boolean> robNewOrder(@PathVariable Long orderId,@PathVariable Long driverId) {
 
-        Long driverId = AuthContextHolder.getUserId();
         Boolean result = orderInfoService.robNewOrder(driverId, orderId);
         return Result.ok(result);
 
@@ -75,6 +73,15 @@ public class OrderInfoController {
 
         OrderInfo orderInfo = orderInfoService.getById(orderId);
         return Result.ok(orderInfo);
+
+    }
+
+    @Operation(summary = "配送员到达开始位置")
+    @PostMapping(value = "/driverArrivedStartLocation/{orderId}/{driverId}")
+    public Result<Boolean> driverArrivedStartLocation(@PathVariable Long orderId,@PathVariable Long driverId) {
+
+        Boolean result = orderInfoService.driverArrivedStartLocation(orderId, driverId);
+        return Result.ok(result);
 
     }
 }

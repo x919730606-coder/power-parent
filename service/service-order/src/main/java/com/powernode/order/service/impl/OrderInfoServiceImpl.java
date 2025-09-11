@@ -179,4 +179,21 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     }
 
+    @Override
+    public  Boolean driverArrivedStartLocation(Long orderId, Long driverId){
+
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, orderId);
+        queryWrapper.eq(OrderInfo::getDriverId, driverId);
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        updateOrderInfo.setStatus(OrderStatus.DRIVER_ARRIVED.getStatus());
+        updateOrderInfo.setArriveTime(new Date());
+
+        orderInfoMapper.update(updateOrderInfo, queryWrapper);
+
+        return true;
+
+    }
+
 }

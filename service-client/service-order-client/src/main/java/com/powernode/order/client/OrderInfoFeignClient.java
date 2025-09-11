@@ -32,4 +32,7 @@ public interface OrderInfoFeignClient {
     @PostMapping(value = "/order/info/robNewOrder/{orderId}")
     Result<Boolean> robNewOrder(@PathVariable Long orderId);
 
+    @PostMapping(value = "/order/info/driverArrivedStartLocation/{orderId}/{driverId}")
+    Result<Boolean> driverArrivedStartLocation(@PathVariable Long orderId,@PathVariable Long driverId);
+
 }

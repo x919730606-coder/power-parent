@@ -87,6 +87,16 @@ public class OrderController {
 
     }
 
+    @Operation(summary = "配送员到达开始位置")
+    @PowerLogin
+    @PostMapping("/driverArriveStartLocation/{orderId}")
+    public Result<Boolean> driverArrivedStartLocation(@PathVariable Long orderId) {
+
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.driverArrivedStartLocation(orderId, driverId));
+
+    }
+
 
 }
 

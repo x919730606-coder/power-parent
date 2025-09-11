@@ -20,4 +20,6 @@ public interface OrderService {
     OrderInfoVo getOrderInfo(Long orderId, Long driverId);
 
     DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm drivingLineForm);
+
+    Boolean driverArrivedStartLocation(Long orderId, Long driverId);
 }
