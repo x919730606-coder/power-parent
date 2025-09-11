@@ -3,6 +3,7 @@ package com.powernode.order.controller;
 import com.powernode.common.annotation.PowerLogin;
 import com.powernode.common.result.Result;
 import com.powernode.common.util.AuthContextHolder;
+import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.order.service.OrderInfoService;
@@ -65,6 +66,15 @@ public class OrderInfoController {
 
         CurrentOrderInfoVo currentOrderInfoVo = orderInfoService.searchDriverCurrentOrderInfo(driverId);
         return Result.ok(currentOrderInfoVo);
+
+    }
+
+    @Operation(summary = "根据id查询订单信息")
+    @GetMapping(value = "/getOrderInfo/{orderId}")
+    public Result<OrderInfo> getOrderInfo(@PathVariable Long orderId) {
+
+        OrderInfo orderInfo = orderInfoService.getById(orderId);
+        return Result.ok(orderInfo);
 
     }
 }

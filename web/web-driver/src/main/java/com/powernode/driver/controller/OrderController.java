@@ -6,6 +6,9 @@ import com.powernode.common.util.AuthContextHolder;
 import com.powernode.driver.service.OrderService;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.model.vo.order.NewOrderDataVo;
+import com.powernode.model.vo.order.OrderInfoVo;
+import com.powernode.order.client.OrderInfoFeignClient;
+import com.powernode.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -26,6 +29,9 @@ public class OrderController {
 
     @Resource
     private OrderService orderService;
+    @Resource
+    private OrderInfoService orderInfoService;
+
 
     @Operation(summary = "查询订单状态")
     @GetMapping("/queryOrderStatus/{orderId}")
@@ -50,6 +56,26 @@ public class OrderController {
 
         Long userId = AuthContextHolder.getUserId();
         return Result.ok(orderService.searchDriverCurrentOrder(userId));
+
+    }
+
+    @Operation(summary = "抢单")
+    @PowerLogin
+    @GetMapping("/robNewOrder/{orderId}")
+    public Result<Boolean> robNewOrder(@PathVariable Long orderId) {
+
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderInfoService.robNewOrder(driverId, orderId));
+
+    }
+
+    @Operation(summary = "配送员查看当前订单信息")
+    @PowerLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
+
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(driverId, orderId));
 
     }
 

@@ -8,6 +8,7 @@ import com.powernode.model.form.customer.ExpectOrderForm;
 import com.powernode.model.form.customer.SubmitOrderForm;
 import com.powernode.model.vo.customer.ExpectOrderVo;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
+import com.powernode.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -57,6 +58,16 @@ public class OrderController {
     public Result<Integer> queryOrderStatus(@PathVariable Long orderId){
 
         return Result.ok(orderService.queryOrderStatus(orderId));
+
+    }
+
+    @Operation(summary = "查询配送员当前进行中的订单信息")
+    @GetMapping("/getOrderInfo/{orderId}")
+    @PowerLogin
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId){
+
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(orderId,driverId));
 
     }
 

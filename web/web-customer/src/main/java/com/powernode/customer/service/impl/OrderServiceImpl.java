@@ -1,9 +1,13 @@
 package com.powernode.customer.service.impl;
 
 
+import com.powernode.common.execption.PowerException;
+import com.powernode.common.result.Result;
+import com.powernode.common.result.ResultCodeEnum;
 import com.powernode.customer.service.OrderService;
 import com.powernode.dispatch.client.NewOrderFeignClient;
 import com.powernode.map.client.MapFeignClient;
+import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.form.customer.ExpectOrderForm;
 import com.powernode.model.form.customer.SubmitOrderForm;
 import com.powernode.model.form.map.CalculateDrivingLineForm;
@@ -13,6 +17,7 @@ import com.powernode.model.vo.customer.ExpectOrderVo;
 import com.powernode.model.vo.dispatch.NewOrderTaskVo;
 import com.powernode.model.vo.map.DrivingLineVo;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
+import com.powernode.model.vo.order.OrderInfoVo;
 import com.powernode.model.vo.rules.FeeRuleResponseVo;
 import com.powernode.order.client.OrderInfoFeignClient;
 import com.powernode.rules.client.FeeRuleFeignClient;
@@ -105,6 +110,20 @@ public class OrderServiceImpl implements OrderService {
     public CurrentOrderInfoVo searchCustomerCurrentOrderInfo(Long customerId) {
 
         return orderInfoFeignClient.searchCustomerCurrentOrderInfo(customerId).getData();
+
+    }
+
+    @Override
+    public OrderInfoVo getOrderInfo(Long orderId, Long customerId) {
+
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        if (orderInfo.getCustomerId().longValue() != customerId.longValue()){
+            throw new PowerException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+        OrderInfoVo orderInfoVo = new OrderInfoVo();
+        BeanUtils.copyProperties(orderInfo, orderInfoVo);
+        orderInfoVo.setOrderId(orderId);
+        return orderInfoVo;
 
     }
 
