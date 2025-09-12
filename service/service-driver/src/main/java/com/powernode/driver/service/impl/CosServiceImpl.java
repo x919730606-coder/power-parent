@@ -1,7 +1,10 @@
 package com.powernode.driver.service.impl;
 
 
+import com.powernode.common.execption.PowerException;
+import com.powernode.common.result.ResultCodeEnum;
 import com.powernode.driver.properties.TencentProperties;
+import com.powernode.driver.service.CiService;
 import com.powernode.driver.service.CosService;
 import com.powernode.model.vo.driver.CosUploadVo;
 import com.qcloud.cos.COSClient;
@@ -34,6 +37,8 @@ public class CosServiceImpl implements CosService {
 
     @Resource
     private TencentProperties tencentProperties;
+    @Resource
+    private CiService ciService;
 
     @Override
     public CosUploadVo upload(MultipartFile file, String path){
@@ -56,6 +61,13 @@ public class CosServiceImpl implements CosService {
             cosClient.putObject(putObjectRequest);
             cosClient.shutdown();
 
+            Boolean flag = ciService.imageAuditing(uploadPath);
+
+            if (!flag){
+                cosClient.deleteObject(tencentProperties.getBucketPrivate(), uploadPath);
+                throw new PowerException(ResultCodeEnum.IMAGE_AUDITION_FAIL);
+            }
+
             CosUploadVo cosUploadVo = new CosUploadVo();
             cosUploadVo.setUrl(uploadPath);
 
@@ -77,6 +89,7 @@ public class CosServiceImpl implements CosService {
 
         URL url = cosClient.generatePresignedUrl(urlRequest);
         cosClient.shutdown();
+
 
         return url.toString();
     }
