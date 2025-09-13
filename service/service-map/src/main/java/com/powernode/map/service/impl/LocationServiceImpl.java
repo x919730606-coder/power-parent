@@ -3,6 +3,7 @@ package com.powernode.map.service.impl;
 
 import com.powernode.common.constant.RedisConstant;
 import com.powernode.common.constant.SystemConstant;
+import com.powernode.common.util.LocationUtil;
 import com.powernode.driver.client.DriverInfoFeignClient;
 import com.powernode.map.repository.OrderServiceLocationRepository;
 import com.powernode.map.service.LocationService;
@@ -176,6 +177,34 @@ public class LocationServiceImpl implements LocationService {
         BeanUtils.copyProperties(orderServiceLocation, orderServiceLastLocationVo);
 
         return orderServiceLastLocationVo;
+
+    }
+
+    @Override
+    public BigDecimal calculateOrderRealDistance(Long orderId){
+
+        List<OrderServiceLocation> serviceLocationList = orderServiceLocationRepository.findByOrderIdOrderByCreateTimeAsc(orderId);
+
+        double realDistance = 0;
+        if (!CollectionUtils.isEmpty(serviceLocationList)){
+            for (int i = 0,size = serviceLocationList.size() - 1; i < size ; i++){
+                OrderServiceLocation start = serviceLocationList.get(i);
+                OrderServiceLocation end = serviceLocationList.get(i + 1);
+
+                double distance = LocationUtil.getDistance(start.getLatitude().doubleValue(),
+                        start.getLongitude().doubleValue(),
+                        end.getLatitude().doubleValue(),
+                        end.getLongitude().doubleValue());
+
+                realDistance += distance;
+            }
+        }
+
+        if (realDistance == 0){
+            return new BigDecimal(5);
+        }
+
+        return new BigDecimal(realDistance);
 
     }
 

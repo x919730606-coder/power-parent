@@ -7,6 +7,7 @@ import com.powernode.common.constant.RedisConstant;
 import com.powernode.common.execption.PowerException;
 import com.powernode.common.result.ResultCodeEnum;
 import com.powernode.model.entity.order.OrderInfo;
+import com.powernode.model.entity.order.OrderMonitor;
 import com.powernode.model.enums.OrderStatus;
 import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.model.form.order.StartDriveForm;
@@ -14,6 +15,7 @@ import com.powernode.model.form.order.UpdateOrderCartForm;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.order.mapper.OrderInfoMapper;
 import com.powernode.order.service.OrderInfoService;
+import com.powernode.order.service.OrderMonitorService;
 import jakarta.annotation.Resource;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -35,6 +37,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private OrderInfoMapper orderInfoMapper;
     @Resource
     private RedissonClient redissonClient;
+    @Resource
+    private OrderMonitorService orderMonitorService;
 
     @Override
     public Long addOrderInfo(OrderInfoForm orderInfoForm){
@@ -226,8 +230,15 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         orderInfoMapper.update(updateOrderInfo, queryWrapper);
 
+        OrderMonitor orderMonitor = new OrderMonitor();
+        orderMonitor.setOrderId(startDriveForm.getOrderId());
+
+        orderMonitorService.addOrderMonitor(orderMonitor);
+
         return true;
 
     }
+
+
 
 }
