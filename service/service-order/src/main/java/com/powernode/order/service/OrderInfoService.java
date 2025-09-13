@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.model.form.order.StartDriveForm;
+import com.powernode.model.form.order.UpdateOrderBillForm;
 import com.powernode.model.form.order.UpdateOrderCartForm;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 
@@ -26,4 +27,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     Boolean startDrive(StartDriveForm startDriveForm);
 
     Long getOrderNumByTime(String startTIme, String endTime);
+
+    Boolean endDriver(UpdateOrderBillForm billForm);
 }

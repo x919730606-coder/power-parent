@@ -6,22 +6,29 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.powernode.common.constant.RedisConstant;
 import com.powernode.common.execption.PowerException;
 import com.powernode.common.result.ResultCodeEnum;
+import com.powernode.model.entity.order.OrderBill;
 import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.entity.order.OrderMonitor;
+import com.powernode.model.entity.order.OrderProfitsharing;
 import com.powernode.model.enums.OrderStatus;
 import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.model.form.order.StartDriveForm;
+import com.powernode.model.form.order.UpdateOrderBillForm;
 import com.powernode.model.form.order.UpdateOrderCartForm;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
+import com.powernode.order.mapper.OrderBillMapper;
 import com.powernode.order.mapper.OrderInfoMapper;
+import com.powernode.order.mapper.OrderProfitsharingMapper;
 import com.powernode.order.service.OrderInfoService;
 import com.powernode.order.service.OrderMonitorService;
 import jakarta.annotation.Resource;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.UUID;
@@ -39,6 +46,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private RedissonClient redissonClient;
     @Resource
     private OrderMonitorService orderMonitorService;
+    @Autowired
+    private OrderBillMapper orderBillMapper;
+    @Resource
+    private OrderProfitsharingMapper orderProfitsharingMapper;
 
     @Override
     public Long addOrderInfo(OrderInfoForm orderInfoForm){
@@ -247,6 +258,40 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         queryWrapper.le(OrderInfo::getStartServiceTime, endTime);
 
         return orderInfoMapper.selectCount(queryWrapper);
+
+    }
+
+    @Transactional
+    @Override
+    public Boolean endDriver(UpdateOrderBillForm billForm){
+
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, billForm.getOrderId());
+        queryWrapper.eq(OrderInfo::getDriverId, billForm.getDriverId());
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        updateOrderInfo.setStatus(OrderStatus.END_SERVICE.getStatus());
+        updateOrderInfo.setRealAmount(billForm.getTotalAmount());
+        updateOrderInfo.setFavourFee(billForm.getFavourFee());
+        updateOrderInfo.setEndServiceTime(new Date());
+        updateOrderInfo.setRealDistance(billForm.getRealDistance());
+
+        orderInfoMapper.update(updateOrderInfo, queryWrapper);
+
+        OrderBill orderBill = new OrderBill();
+        BeanUtils.copyProperties(billForm, orderBill);
+        orderBill.setOrderId(billForm.getOrderId());
+        orderBill.setPayAmount(billForm.getTotalAmount());
+
+        orderBillMapper.insert(orderBill);
+
+        OrderProfitsharing orderProfitsharing = new OrderProfitsharing();
+        BeanUtils.copyProperties(billForm, orderProfitsharing);
+        orderProfitsharing.setOrderId(billForm.getOrderId());
+        orderProfitsharing.setStatus(1);
+        orderProfitsharingMapper.insert(orderProfitsharing);
+
+        return true;
 
     }
 

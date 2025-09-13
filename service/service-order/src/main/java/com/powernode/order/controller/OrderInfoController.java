@@ -6,6 +6,7 @@ import com.powernode.common.util.AuthContextHolder;
 import com.powernode.model.entity.order.OrderInfo;
 import com.powernode.model.form.order.OrderInfoForm;
 import com.powernode.model.form.order.StartDriveForm;
+import com.powernode.model.form.order.UpdateOrderBillForm;
 import com.powernode.model.form.order.UpdateOrderCartForm;
 import com.powernode.model.vo.order.CurrentOrderInfoVo;
 import com.powernode.order.service.OrderInfoService;
@@ -109,6 +110,14 @@ public class OrderInfoController {
 
         Long orderCount = orderInfoService.getOrderNumByTime(startTime, endTime);
         return Result.ok(orderCount);
+
+    }
+
+    @Operation(summary = "配送员结束配送更新账单信息")
+    @PostMapping(value = "/endDriver")
+    public Result<Boolean> endDriver(@RequestBody UpdateOrderBillForm billForm) {
+
+        return Result.ok(orderInfoService.endDriver(billForm));
 
     }
 }
