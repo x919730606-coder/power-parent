@@ -43,4 +43,7 @@ public interface OrderInfoFeignClient {
     @PostMapping(value = "/order/info/startDrive")
     Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm);
 
+    @GetMapping(value = "/order/info/getOrderByTime/{startTime}/{endTime}")
+    Result<Long> getOrderNumByTime(@PathVariable String startTime,@PathVariable String endTime);
+
 }

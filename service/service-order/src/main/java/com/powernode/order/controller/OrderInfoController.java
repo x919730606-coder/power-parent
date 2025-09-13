@@ -102,5 +102,14 @@ public class OrderInfoController {
         return Result.ok(orderInfoService.startDrive(startDriveForm));
 
     }
+
+    @Operation(summary = "查询订单数量")
+    @GetMapping(value = "/getOrderByTime/{startTime}/{endTime}")
+    public Result<Long> getOrderNumByTime(@PathVariable String startTime,@PathVariable String endTime) {
+
+        Long orderCount = orderInfoService.getOrderNumByTime(startTime, endTime);
+        return Result.ok(orderCount);
+
+    }
 }
 

@@ -24,4 +24,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     Boolean updateOrderCart(UpdateOrderCartForm orderCartForm);
 
     Boolean startDrive(StartDriveForm startDriveForm);
+
+    Long getOrderNumByTime(String startTIme, String endTime);
 }
